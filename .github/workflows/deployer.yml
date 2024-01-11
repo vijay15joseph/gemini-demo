@@ -1,0 +1,63 @@
+name: CD CD
+
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - id: "auth"
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{secrets.GCP_SA_KEY}}
+
+      - name: "upload src directory as artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-directory
+          path: src
+
+      - name: "upload src artifact to google cloud storage"
+        uses: "google-github-actions/upload-cloud-storage@v1"
+        with:
+          path: "src"
+          destination: "cf-cloud-function-source"
+          gzip: true
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+      - id: "auth"
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{secrets.GCP_SA_KEY}}
+
+      - name: "set up google cloud sdk"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          version: ">= 363.0.0"
+
+      - name: "copy source code directory"
+        run: "gsutil cp -r gs://gemini-cloud-function-source/src ."
+
+      - name: "list files"
+        run: "cd src; ls"
+
+      - name: "zip source code files"
+        run: "cd src; ls; zip src.zip *"
+
+      - name: "upload source code"
+        run: "gsutil cp src/src.zip gs://gemini-cloud-function-source"
+
+      - name: "deploy cloud function using gcloud"
+        continue-on-error: false
+        run: "gcloud  functions deploy my_function --region=us-central1 \
+          --runtime=python39 --gen2 --entry-point=main \
+          --trigger-bucket=gemini-demo-images \
+          --source=gs://gemini-cloud-function-source/src.zip"
