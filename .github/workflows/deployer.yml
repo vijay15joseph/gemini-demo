@@ -57,7 +57,7 @@ jobs:
 
       - name: "deploy cloud function using gcloud"
         continue-on-error: false
-        run: "gcloud  functions deploy my_function --region=us-central1 \
+        run: "gcloud  functions deploy gemini-example --region=us-central1 \
           --runtime=python39 --gen2 --entry-point=main \
           --trigger-bucket=gemini-demo-images \
           --source=gs://gemini-cloud-function-source/src.zip"
