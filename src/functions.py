@@ -24,12 +24,12 @@ def generate_text(project_id: str, location: str, file: str) -> str:
     return response.text
 
 
-def save_results(time, desc, url):
+def save_results(uuid, time, desc, url):
     import firebase_admin
 
     # Application Default credentials are automatically created.
     app = firebase_admin.initialize_app()
     db = firestore.client()
 
-    doc_ref = db.collection("gemini-demo-images").document("test_doc")
-    doc_ref.set({"first": "Chas", "last": "Lovelace", "born": 1815})
+    doc_ref = db.collection("gemini-demo-images").document(uuid)
+    doc_ref.set({"timeStamp": time, "imageDescription": desc, "imageUrl": url})

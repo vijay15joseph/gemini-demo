@@ -33,4 +33,4 @@ def main(cloud_event):
 
     output = generate_text(project, loc, path)
 
-    save_results(timeCreated, output, path)
+    save_results(name, timeCreated, output, path)
