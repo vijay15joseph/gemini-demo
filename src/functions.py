@@ -1,5 +1,7 @@
 import vertexai
 from vertexai.preview.generative_models import GenerativeModel, Part
+import firebase_admin
+from firebase_admin import firestore
 
 
 def generate_text(project_id: str, location: str, file: str) -> str:
@@ -20,3 +22,14 @@ def generate_text(project_id: str, location: str, file: str) -> str:
     )
     print(response)
     return response.text
+
+
+def save_results(txt):
+    import firebase_admin
+
+    # Application Default credentials are automatically created.
+    app = firebase_admin.initialize_app()
+    db = firestore.client()
+
+    doc_ref = db.collection("gemini-demo-images").document("test_doc")
+    doc_ref.set({"first": "Chas", "last": "Lovelace", "born": 1815})

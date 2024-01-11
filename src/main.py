@@ -32,3 +32,5 @@ def main(cloud_event):
     # loc = "us-central1"
 
     generate_text(project, loc, path)
+
+    save_results("")
