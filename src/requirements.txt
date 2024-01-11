@@ -4,3 +4,4 @@ requests
 google-cloud-pubsub
 google-cloud-bigquery
 google-cloud-storage
+vertexai
