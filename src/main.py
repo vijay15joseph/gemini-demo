@@ -10,7 +10,7 @@ def main(cloud_event):
     # event_id = cloud_event["id"]
     # event_type = cloud_event["type"]
 
-    # bucket = data["bucket"]
+    bucket = data["bucket"]
     name = data["name"]
     # metageneration = data["metageneration"]
     # timeCreated = data["timeCreated"]
@@ -26,5 +26,9 @@ def main(cloud_event):
 
     project = "cf-data-analytics"
     loc = "us-central1"
+    path = "gs://" + bucket + "/" + name
+    print(path)
+    # project = "cf-data-analytics"
+    # loc = "us-central1"
 
-    generate_text(project, loc, name)
+    generate_text(project, loc, path)
