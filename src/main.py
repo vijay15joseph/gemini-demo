@@ -4,7 +4,7 @@ from functions import *
 
 @functions_framework.cloud_event
 def main(cloud_event):
-    print("test")
+    print("test event")
     # data = cloud_event.data
 
     # event_id = cloud_event["id"]
