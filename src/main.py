@@ -7,12 +7,8 @@ def main(cloud_event):
     print("test event")
     data = cloud_event.data
 
-    # event_id = cloud_event["id"]
-    # event_type = cloud_event["type"]
-
     bucket = data["bucket"]
     name = data["name"]
-    # metageneration = data["metageneration"]
     timeCreated = data["timeCreated"]
     # updated = data["updated"]
 
@@ -27,10 +23,14 @@ def main(cloud_event):
     project = "cf-data-analytics"
     loc = "us-central1"
     path = "gs://" + bucket + "/" + name
+
+    path_url = "https://storage.googleapis.com/" + bucket + "/" + name
+    # https://storage.googleapis.com/gemini-demo-images/187739b4-d12f-4bd4-b0c8-142c84636a9d.jpg
+
     print(path)
     # project = "cf-data-analytics"
     # loc = "us-central1"
 
     output = generate_text(project, loc, path)
 
-    save_results(name, timeCreated, output, path)
+    save_results(name, timeCreated, output, path_url)
