@@ -24,7 +24,7 @@ def generate_text(project_id: str, location: str, file: str) -> str:
     return response.text
 
 
-def save_results(txt):
+def save_results(time, desc, url):
     import firebase_admin
 
     # Application Default credentials are automatically created.

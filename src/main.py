@@ -13,7 +13,7 @@ def main(cloud_event):
     bucket = data["bucket"]
     name = data["name"]
     # metageneration = data["metageneration"]
-    # timeCreated = data["timeCreated"]
+    timeCreated = data["timeCreated"]
     # updated = data["updated"]
 
     # print(f"Event ID: {event_id}")
@@ -31,6 +31,6 @@ def main(cloud_event):
     # project = "cf-data-analytics"
     # loc = "us-central1"
 
-    generate_text(project, loc, path)
+    output = generate_text(project, loc, path)
 
-    save_results("")
+    save_results(timeCreated, output, path)
