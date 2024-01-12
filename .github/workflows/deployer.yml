@@ -60,4 +60,5 @@ jobs:
         run: "gcloud  functions deploy gemini-example --region=us-central1 \
           --runtime=python39 --gen2 --entry-point=main \
           --trigger-bucket=gemini-demo-images \
+          --min-instances=1 \
           --source=gs://gemini-cloud-function-source/src.zip"
