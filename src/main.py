@@ -4,33 +4,21 @@ from functions import *
 
 @functions_framework.cloud_event
 def main(cloud_event):
-    print("test event")
+    # trigger data
     data = cloud_event.data
 
-    bucket = data["bucket"]
-    name = data["name"]
-    timeCreated = data["timeCreated"]
-    # updated = data["updated"]
+    bucket = data["bucket"]  # bucket
+    name = data["name"]  # file name
+    timeCreated = data["timeCreated"]  # time when file was created
 
-    # print(f"Event ID: {event_id}")
-    # print(f"Event type: {event_type}")
-    # print(f"Bucket: {bucket}")
-    print(f"File: {name}")
-    # print(f"Metageneration: {metageneration}")
-    # print(f"Created: {timeCreated}")
-    # print(f"Updated: {updated}")
-
-    project = "cf-data-analytics"
+    project = "cf-data-analytics"  # required to initialize vertex client
     loc = "us-central1"
-    path = "gs://" + bucket + "/" + name
+    path = "gs://" + bucket + "/" + name  # uri
 
-    path_url = "https://storage.googleapis.com/" + bucket + "/" + name
-    # https://storage.googleapis.com/gemini-demo-images/187739b4-d12f-4bd4-b0c8-142c84636a9d.jpg
+    path_url = "https://storage.googleapis.com/" + bucket + "/" + name  # public url
 
-    print(path)
-    # project = "cf-data-analytics"
-    # loc = "us-central1"
-
+    # function that calls gemini api
     output = generate_text(project, loc, path)
 
+    # save gemini output as document to firestore
     save_results(name, timeCreated, output, path_url)

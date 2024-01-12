@@ -20,15 +20,18 @@ def generate_text(project_id: str, location: str, file: str) -> str:
             "what is shown in this image?",
         ]
     )
-    print(response)
     return response.text
 
 
 def save_results(uuid, time, desc, url):
-    import firebase_admin
+    # import firebase_admin
 
     # Application Default credentials are automatically created.
-    app = firebase_admin.initialize_app()
+    # app = firebase_admin.initialize_app()
+
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app()
+
     db = firestore.client()
 
     doc_ref = db.collection("gemini-demo-images").document(uuid)
