@@ -17,7 +17,7 @@ def generate_text(project_id: str, location: str, file: str) -> str:
                 file, mime_type="image/jpeg"
             ),
             # Add an example query
-            "what is shown in this image?",
+            "Let's play pictionary. I will show you a drawing I made and you guess what it is! I will be drawing common nouns like animals, vehicles, and household objects",
         ]
     )
     return response.text
