@@ -30,7 +30,8 @@ jobs:
 
       - name: "create public gcs bucket for uploaded images"
         continue-on-error: true
-        run: gcloud storage buckets create gs://${{secrets.IMAGES_GCS}};
+        run:
+          gcloud storage buckets create gs://${{secrets.IMAGES_GCS}} --location=${{secrets.LOCATION}};
           gcloud storage buckets add-iam-policy-binding gs://${{secrets.IMAGES_GCS}} --member=allUsers --role=roles/storage.objectViewer
 
       - name: "create public gcs bucket for html front end"
