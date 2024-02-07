@@ -113,7 +113,7 @@ jobs:
       - name: "deploy cloud function using gcloud"
         continue-on-error: false
         run: "gcloud  functions deploy gemini-example --region=us-central1 \
-          --runtime=python39 --gen2 --entry-point=main \
+          --runtime=python39 --gen2 \
           --trigger-bucket=${{secrets.IMAGES_GCS}} \
           --min-instances=1 \
           --memory=2Gi \
