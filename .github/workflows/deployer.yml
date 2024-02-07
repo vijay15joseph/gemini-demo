@@ -112,12 +112,12 @@ jobs:
 
       - name: "deploy cloud function using gcloud"
         continue-on-error: false
-        run: "gcloud  functions deploy gemini-example --region=us-central1 \
+        run: "gcloud  functions deploy gemini-example \
           --runtime=python39 --gen2 --entry-point=main \
           --trigger-bucket=${{secrets.IMAGES_GCS}} \
           --min-instances=1 \
           --memory=2Gi \
-          --region=${{secrets.LOCATION}} \
+          --region=${{secrets.LOCATION}} \S
           --set-env-vars=[PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}}]
           --source=gs://${{secrets.GENERATE_SOURCE_GCS}}/generate.zip"
 
