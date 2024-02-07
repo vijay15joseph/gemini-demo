@@ -44,16 +44,16 @@ jobs:
           version: ">= 363.0.0"
 
       - name: "copy source code directory"
-        run: "gsutil cp -r gs://gemini-cloud-function-source/src ."
+        run: "gsutil cp -r gs://gemini-cloud-function-source/generate ."
 
       - name: "list files"
-        run: "cd src; ls"
+        run: "cd generate; ls"
 
       - name: "zip source code files"
-        run: "cd src; ls; zip src.zip *"
+        run: "cd generate; ls; zip generate.zip *"
 
       - name: "upload source code"
-        run: "gsutil cp src/src.zip gs://gemini-cloud-function-source"
+        run: "gsutil cp generate/generate.zip gs://gemini-cloud-function-source"
 
       - name: "deploy cloud function using gcloud"
         continue-on-error: false
@@ -62,4 +62,4 @@ jobs:
           --trigger-bucket=gemini-demo-images \
           --min-instances=1 \
           --memory=2Gi \
-          --source=gs://gemini-cloud-function-source/src.zip"
+          --source=gs://gemini-cloud-function-source/generate.zip"
