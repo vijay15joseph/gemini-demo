@@ -52,7 +52,7 @@ jobs:
       - name: "upload generate directory as artifact"
         uses: actions/upload-artifact@v3
         with:
-          name: code-directory
+          name: code-directory generate
           path: generate
 
       - name: "upload generate artifact to google cloud storage"
@@ -65,7 +65,7 @@ jobs:
       - name: "upload serve directory as artifact"
         uses: actions/upload-artifact@v3
         with:
-          name: code-directory
+          name: code-directory serve
           path: serve
 
       - name: "upload serve artifact to google cloud storage"
