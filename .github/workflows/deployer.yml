@@ -49,20 +49,33 @@ jobs:
         with:
           credentials_json: ${{secrets.GCP_SA_KEY}}
 
-      - name: "upload src directory as artifact"
+      - name: "upload generate directory as artifact"
         uses: actions/upload-artifact@v3
         with:
           name: code-directory
           path: generate
 
-      - name: "upload src artifact to google cloud storage"
+      - name: "upload generate artifact to google cloud storage"
         uses: "google-github-actions/upload-cloud-storage@v1"
         with:
           path: "generate"
           destination: ${{secrets.GENERATE_SOURCE_GCS}}
           gzip: true
 
-  deploy:
+      - name: "upload serve directory as artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-directory
+          path: serve
+
+      - name: "upload serve artifact to google cloud storage"
+        uses: "google-github-actions/upload-cloud-storage@v1"
+        with:
+          path: "serve"
+          destination: ${{secrets.SERVE_SOURCE_GCS}}
+          gzip: true
+
+  deploy-generate:
     runs-on: ubuntu-latest
     needs: build
 
@@ -97,5 +110,6 @@ jobs:
           --trigger-bucket=gemini-demo-images \
           --min-instances=1 \
           --memory=2Gi \
+          --region=${{secrets.LOCATION}} \
           --source=gs://${{secrets.GENERATE_SOURCE_GCS}}/generate.zip \
           --set-env-vars=[PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}}]"
