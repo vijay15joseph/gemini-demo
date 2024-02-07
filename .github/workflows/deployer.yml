@@ -40,6 +40,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    needs: infra
 
     steps:
       - uses: actions/checkout@v3
@@ -58,7 +59,7 @@ jobs:
         uses: "google-github-actions/upload-cloud-storage@v1"
         with:
           path: "generate"
-          destination: "gemini-cloud-function-source"
+          destination: ${{secrets.GENERATE_SOURCE_GCS}}
           gzip: true
 
   deploy:
@@ -78,7 +79,7 @@ jobs:
           version: ">= 363.0.0"
 
       - name: "copy source code directory"
-        run: "gsutil cp -r gs://gemini-cloud-function-source/generate ."
+        run: "gsutil cp -r gs://${{secrets.GENERATE_SOURCE_GCS}}/generate ."
 
       - name: "list files"
         run: "cd generate; ls"
@@ -87,7 +88,7 @@ jobs:
         run: "cd generate; ls; zip generate.zip *"
 
       - name: "upload source code"
-        run: "gsutil cp generate/generate.zip gs://gemini-cloud-function-source"
+        run: "gsutil cp generate/generate.zip gs://${{secrets.GENERATE_SOURCE_GCS}}"
 
       - name: "deploy cloud function using gcloud"
         continue-on-error: false
@@ -96,5 +97,5 @@ jobs:
           --trigger-bucket=gemini-demo-images \
           --min-instances=1 \
           --memory=2Gi \
-          --source=gs://gemini-cloud-function-source/generate.zip \
+          --source=gs://${{secrets.GENERATE_SOURCE_GCS}}/generate.zip \
           --set-env-vars=[PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}}]"
