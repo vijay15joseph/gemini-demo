@@ -52,7 +52,7 @@ jobs:
       - name: "upload generate directory as artifact"
         uses: actions/upload-artifact@v3
         with:
-          name: code-directory generate
+          name: code-directory-generate
           path: generate
 
       - name: "upload generate artifact to google cloud storage"
@@ -65,7 +65,7 @@ jobs:
       - name: "upload serve directory as artifact"
         uses: actions/upload-artifact@v3
         with:
-          name: code-directory serve
+          name: code-directory-serve
           path: serve
 
       - name: "upload serve artifact to google cloud storage"
@@ -113,3 +113,42 @@ jobs:
           --region=${{secrets.LOCATION}} \
           --source=gs://${{secrets.GENERATE_SOURCE_GCS}}/generate.zip \
           --set-env-vars=[PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}}]"
+
+  deploy-serve:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+      - id: "auth"
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{secrets.GCP_SA_KEY}}
+
+      - name: "set up google cloud sdk"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          version: ">= 363.0.0"
+
+      - name: "copy source code directory"
+        run: "gsutil cp -r gs://${{secrets.SERVE_SOURCE_GCS}}/serve ."
+
+      - name: "list files"
+        run: "cd serve; ls"
+
+      - name: "zip source code files"
+        run: "cd serve; ls; zip serve.zip *"
+
+      - name: "upload source code"
+        run: "gsutil cp serve/serve.zip gs://${{secrets.SERVE_SOURCE_GCS}}"
+
+      - name: "deploy cloud function using gcloud"
+        continue-on-error: false
+        run:
+          "gcloud  functions deploy gemini-example-serve --region=us-central1 \
+          --runtime=python39 --gen2 --entry-point=main \
+          --trigger-http \
+          --allow-unauthenticated \
+          --region=${{secrets.LOCATION}} \
+          --min-instances=1 \
+          --source=gs://${{secrets.SERVE_SOURCE_GCS}}/serve.zip"
