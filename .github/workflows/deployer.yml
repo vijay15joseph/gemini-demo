@@ -3,7 +3,33 @@ name: CD CD
 on:
   push:
     branches: [main]
+
 jobs:
+  infra:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - id: "auth"
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{secrets.GCP_SA_KEY}}
+      
+      - name: "set up google cloud sdk"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          version: ">= 363.0.0"
+
+      - name: "copy source code directory"
+        run: "gcloud storage buckets create gs://${{secrets.GENERATE_SOURCE_GCS}}"
+
+      - name: "copy source code directory"
+        run: "gcloud storage buckets create gs://${{secrets.SERVE_SOURCE_GCS}}"
+
+      - name: "copy source code directory"
+        run: gcloud storage buckets create gs://${{secrets.IMAGES_GCS}} 
+        gcloud storage buckets add-iam-policy-binding gs://cf-gemini-demo-app-host --member=allUsers --role=roles/storage.objectViewer
+          
   build:
     runs-on: ubuntu-latest
 

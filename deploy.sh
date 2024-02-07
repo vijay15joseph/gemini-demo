@@ -1,6 +1,6 @@
 # gcloud storage buckets create gs://gemini-cloud-function-source
 
-gcloud storage buckets create gs://gemini-demo-images --location=us-central1
+gcloud storage buckets create gs://${{secrets.GENERATE_SOURCE_GCS}}
 # gsutil iam ch allUsers:objectViewer gs://gemini-demo-images
 
 # change to a using gcloud storage
