@@ -20,15 +20,19 @@ jobs:
         with:
           version: ">= 363.0.0"
 
-      - name: "copy source code directory"
+      - name: "create gcs bucket for generate function"
         run: "gcloud storage buckets create gs://${{secrets.GENERATE_SOURCE_GCS}}"
 
-      - name: "copy source code directory"
+      - name: "create gcs bucket for serve function"
         run: "gcloud storage buckets create gs://${{secrets.SERVE_SOURCE_GCS}}"
 
-      - name: "copy source code directory"
+      - name: "create public gcs bucket for uploaded images"
         run: gcloud storage buckets create gs://${{secrets.IMAGES_GCS}}
-          gcloud storage buckets add-iam-policy-binding gs://cf-gemini-demo-app-host --member=allUsers --role=roles/storage.objectViewer
+          gcloud storage buckets add-iam-policy-binding gs://${{secrets.IMAGES_GCS}} --member=allUsers --role=roles/storage.objectViewer
+
+      - name: "create public gcs bucket for html"
+        run: gcloud storage buckets create gs://${{secrets.HOST}}
+          gcloud storage buckets add-iam-policy-binding gs://${{secrets.HOST}} --member=allUsers --role=roles/storage.objectViewer
 
   build:
     runs-on: ubuntu-latest
