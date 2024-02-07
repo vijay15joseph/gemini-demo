@@ -18,12 +18,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: code-directory
-          path: src
+          path: generate
 
       - name: "upload src artifact to google cloud storage"
         uses: "google-github-actions/upload-cloud-storage@v1"
         with:
-          path: "src"
+          path: "generate"
           destination: "gemini-cloud-function-source"
           gzip: true
 
