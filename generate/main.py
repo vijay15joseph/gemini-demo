@@ -1,5 +1,6 @@
 import functions_framework
 from functions import *
+import os
 
 
 @functions_framework.cloud_event
@@ -11,8 +12,11 @@ def main(cloud_event):
     name = data["name"]  # file name
     timeCreated = data["timeCreated"]  # time when file was created
 
-    project = "cf-data-analytics"  # required to initialize vertex client
-    loc = "us-central1"
+    project = os.getenv('PROJECT')
+    loc = os.getenv('LOCATION')
+
+    # project = "cf-data-analytics"  # required to initialize vertex client
+    # loc = "us-central1"
     path = "gs://" + bucket + "/" + name  # uri
 
     path_url = "https://storage.googleapis.com/" + bucket + "/" + name  # public url
