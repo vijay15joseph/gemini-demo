@@ -20,22 +20,22 @@ jobs:
         with:
           version: ">= 363.0.0"
 
-      - name: "create gcs bucket for generate function"
+      - name: "create gcs bucket for generate function code"
         continue-on-error: true
         run: "gcloud storage buckets create gs://${{secrets.GENERATE_SOURCE_GCS}}"
 
-      - name: "create gcs bucket for serve function"
+      - name: "create gcs bucket for serve function code"
         continue-on-error: true
         run: "gcloud storage buckets create gs://${{secrets.SERVE_SOURCE_GCS}}"
 
       - name: "create public gcs bucket for uploaded images"
         continue-on-error: true
-        run: gcloud storage buckets create gs://${{secrets.IMAGES_GCS}}
+        run: gcloud storage buckets create gs://${{secrets.IMAGES_GCS}};
           gcloud storage buckets add-iam-policy-binding gs://${{secrets.IMAGES_GCS}} --member=allUsers --role=roles/storage.objectViewer
 
-      - name: "create public gcs bucket for html"
+      - name: "create public gcs bucket for html front end"
         continue-on-error: true
-        run: gcloud storage buckets create gs://${{secrets.HOST}}
+        run: gcloud storage buckets create gs://${{secrets.HOST}};
           gcloud storage buckets add-iam-policy-binding gs://${{secrets.HOST}} --member=allUsers --role=roles/storage.objectViewer
 
   build:
