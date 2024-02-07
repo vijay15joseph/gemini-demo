@@ -62,5 +62,5 @@ jobs:
           --trigger-bucket=gemini-demo-images \
           --min-instances=1 \
           --memory=2Gi \
-          --source=gs://gemini-cloud-function-source/generate.zip
+          --source=gs://gemini-cloud-function-source/generate.zip \
           --set-env-vars=[PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}}]
