@@ -55,6 +55,13 @@ jobs:
           name: code-directory-generate
           path: generate
 
+      - name: "upload html artifact to google cloud storage"
+        uses: "google-github-actions/upload-cloud-storage@v1"
+        with:
+          path: "web"
+          destination: ${{secrets.HOST}}
+          gzip: false
+
       - name: "upload generate artifact to google cloud storage"
         uses: "google-github-actions/upload-cloud-storage@v1"
         with:
@@ -107,7 +114,7 @@ jobs:
         continue-on-error: false
         run: "gcloud  functions deploy gemini-example --region=us-central1 \
           --runtime=python39 --gen2 --entry-point=main \
-          --trigger-bucket=gemini-demo-images \
+          --trigger-bucket=${{secrets.IMAGES_GCS}} \
           --min-instances=1 \
           --memory=2Gi \
           --region=${{secrets.LOCATION}} \
