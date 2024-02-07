@@ -115,10 +115,10 @@ jobs:
         run:
           "gcloud  functions deploy gemini-example --region=${{secrets.LOCATION}} \
           --runtime=python39 --gen2 --entry-point=main \
-          --trigger-bucket=cf-gemini-demo-images \
+          --trigger-bucket=${{secrets.IMAGES_GCS}} \
           --min-instances=1 \
           --memory=2Gi \
-          --set-env-vars=[PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}}]
+          --set-env-vars=[PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}}] \
           --source=gs://${{secrets.GENERATE_SOURCE_GCS}}/generate.zip"
 
   deploy-serve:
