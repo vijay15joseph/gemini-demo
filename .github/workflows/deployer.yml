@@ -119,7 +119,7 @@ jobs:
           --trigger-bucket=${{secrets.IMAGES_GCS}} \
           --min-instances=1 \
           --memory=2Gi \
-          --set-env-vars=[PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}}] \
+          --set-env-vars=PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}} \
           --source=gs://${{secrets.GENERATE_SOURCE_GCS}}/generate.zip"
 
   deploy-serve:
