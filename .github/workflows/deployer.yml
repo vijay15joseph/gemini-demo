@@ -32,6 +32,12 @@ jobs:
         continue-on-error: true
         run: "gcloud storage buckets create gs://${{vars.SERVE_SOURCE_GCS}}"
 
+      - name: "create public gcs bucket for twilio images"
+        continue-on-error: true
+        run:
+          gcloud storage buckets create gs://${{vars.TWILIO_IMAGES}} --location=${{vars.LOCATION}};
+          gcloud storage buckets add-iam-policy-binding gs://${{vars.TWILIO_IMAGES}} --member=allUsers --role=roles/storage.objectViewer
+
       - name: "create public gcs bucket for uploaded images"
         continue-on-error: true
         run:
@@ -222,4 +228,7 @@ jobs:
           --min-instances=1 \
           --memory=1Gi \
           --source=gs://${{vars.TWILIO_SOURCE_GCS}}/twilio.zip \
-          --set-env-vars HMAC_VAL=${{secrets.HMAC}}"
+          --set-env-vars HMAC_VAL=${{secrets.HMAC}} \
+          --set-env-vars PROJECT=${{secrets.PROJECT}} \
+          --set-env-vars GCS_BUCKET=${{vars.TWILIO_IMAGES}} \
+          --set-env-vars LOCATIONS=${{vars.LOCATIONS}}"

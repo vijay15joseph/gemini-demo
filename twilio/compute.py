@@ -13,12 +13,10 @@ def run(**kwargs):
         media_url = kwargs.get('media_url', {})
         dtype = kwargs.get('dtype', {})
 
-        #  gcs bucket name - images saved here
-        bucket_name = "twillio-images"
 
-        # required to initialize vertex client
-        project = "felipe-sandbox-354619"
-        loc = "us-central1"
+        project = os.getenv('PROJECT')
+        loc = os.getenv('LOCATION')
+        bucket_name = os.getenv('GCS_BUCKET')
 
         # process multimedia messages (mms)
         if dtype == "mms":
