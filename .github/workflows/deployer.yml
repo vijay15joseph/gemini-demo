@@ -36,8 +36,8 @@ jobs:
 
       - name: "create public gcs bucket for html front end"
         continue-on-error: true
-        run: gcloud storage buckets create gs://${{secrets.HOST}};
-          gcloud storage buckets add-iam-policy-binding gs://${{secrets.HOST}} --member=allUsers --role=roles/storage.objectViewer
+        run: gcloud storage buckets create gs://${{vars.HOST}};
+          gcloud storage buckets add-iam-policy-binding gs://${{vars.HOST}} --member=allUsers --role=roles/storage.objectViewer
 
       - name: "create firestore default database"
         continue-on-error: true
@@ -64,11 +64,23 @@ jobs:
           name: code-directory-generate
           path: generate
 
+      - name: "upload serve directory as artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-directory-serve
+          path: serve
+
+      - name: "upload twilio directory as artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-directory-twilio
+          path: twilio
+
       - name: "upload html artifact to google cloud storage"
         uses: "google-github-actions/upload-cloud-storage@v1"
         with:
           path: "web"
-          destination: ${{secrets.HOST}}
+          destination: ${{vars.HOST}}
           gzip: false
 
       - name: "upload generate artifact to google cloud storage"
@@ -78,17 +90,18 @@ jobs:
           destination: ${{vars.GENERATE_SOURCE_GCS}}
           gzip: true
 
-      - name: "upload serve directory as artifact"
-        uses: actions/upload-artifact@v3
-        with:
-          name: code-directory-serve
-          path: serve
-
       - name: "upload serve artifact to google cloud storage"
         uses: "google-github-actions/upload-cloud-storage@v1"
         with:
           path: "serve"
           destination: ${{vars.SERVE_SOURCE_GCS}}
+          gzip: true
+
+      - name: "upload twilio artifact to google cloud storage"
+        uses: "google-github-actions/upload-cloud-storage@v1"
+        with:
+          path: "twilio"
+          destination: ${{vars.TWILIO_SOURCE_GCS}}
           gzip: true
 
   deploy-generate:
@@ -167,3 +180,42 @@ jobs:
           --allow-unauthenticated \
           --min-instances=1 \
           --source=gs://${{vars.SERVE_SOURCE_GCS}}/serve.zip"
+
+  deploy-twilio:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+      - id: "auth"
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{secrets.GCP_SA_KEY}}
+
+      - name: "set up google cloud sdk"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          version: ">= 363.0.0"
+
+      - name: "copy source code directory"
+        run: "gsutil cp -r gs://${{vars.TWILIO_SOURCE_GCS}}/twilio ."
+
+      - name: "list files"
+        run: "cd twilio; ls"
+
+      - name: "zip source code files"
+        run: "cd twilio; ls; zip twilio.zip *"
+
+      - name: "upload source code"
+        run: "gsutil cp twilio/twilio.zip gs://${{vars.TWILIO_SOURCE_GCS}}"
+
+      - name: "deploy cloud function using gcloud"
+        run:
+          "gcloud  functions deploy twilio-endpoint --region=${{vars.LOCATION}} \
+          --runtime=python39 --gen2 --entry-point=main \
+          --trigger-http \
+          --allow-unauthenticated \
+          --min-instances=1 \
+          --memory=1Gi \
+          --source=gs://${{vars.TWILIO_SOURCE_GCS}}/twilio.zip \
+          --set-env-vars HMAC_VAL=${{secrets.HMAC}}"
