@@ -61,6 +61,10 @@ jobs:
         continue-on-error: true
         run: gcloud firestore indexes composite create --collection-group=gemini-demo-text --field-config=field-path=user,order=ascending --field-config=field-path=timeStamp,order=descending
 
+      - name: "create firestore index for pictionary gemini-demo-text-result collection"
+        continue-on-error: true
+        run: gcloud firestore indexes composite create --collection-group=gemini-demo-text-result --field-config=field-path=timeStamp,order=descending --field-config=field-path=fileName,order=descending
+
   build:
     runs-on: ubuntu-latest
     needs: infra
