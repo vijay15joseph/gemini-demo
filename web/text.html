@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image Gallery with Google Gemini</title>
+    <!-- include bootstap Css file -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Poppins:400,700');
+
+        .table-hover tbody tr {
+            color: dimgray;
+
+        }
+
+        .table-hover tbody tr:hover {
+            /* color: rgb(223, 112, 33); */
+            color: rgb(52, 168, 83);
+            background-color: white;
+
+        }
+
+        /* The switch container */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            /* Adjust width as needed */
+            height: 34px;
+            /* Adjust height as needed */
+        }
+
+        /* Hide default checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Style the slider (round button) */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.05);
+            /* Base color for OFF state */
+            transition: .4s;
+            /* Smooth transition effect */
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            /* Adjust height as needed */
+            width: 26px;
+            /* Adjust width as needed */
+            left: 4px;
+            /* Adjust left positioning */
+            bottom: 4px;
+            /* Adjust bottom positioning */
+            background-color: white;
+            transition: .4s;
+            /* Smooth transition effect */
+        }
+
+        /* Toggle ON state */
+        input:checked+.slider {
+            background-color: rgb(234 67 53);
+            /* Color for ON state */
+        }
+
+        /* Rounded slider */
+        input:focus+.slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+            /* Adjust slider position for ON state */
+        }
+
+        /* Rounded slider corners */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!--Create page header rounded corners- and align it to center background color-red-->
+    <!-- Create a page header rounded corners- and align it to center background color-red-->
+
+    <div class="page-header" align="center"
+        style="background-color: rgba(0, 0, 0, 0.05); border-radius: 40px;  margin-left: 100px; margin-right: 100px; height: 180px;">
+
+        <img src="image.png" alt="Gemini Logo" width="128" height="47" style="margin-top: 5px;">
+
+        <h1 align=" center" style="font-size: 35px;">
+            <font face=" Poppins" color="DimGray">Multimodal Playground </font>
+        </h1>
+
+
+        <h2 align=" center" style="font-size: 30px;">
+            <font face=" Poppins" color=##34a853>(877)-679-7361</font>
+        </h2>
+
+
+    </div>
+    <!-- create div and align it on right side of the page rigth margin 100 px--->
+    <!-- Create a button to call the API -->
+    <div align=" right" style="margin-right: 100px;">
+        <label class="switch">
+            <input type="checkbox" onchange="timerEvent(this.checked)">
+            <span class="slider round"></span>
+        </label>
+    </div>
+    <br>
+    <!-- include div tag to show the error message -->
+    <div id="error-message" style="color: red;"></div>
+
+    <!-- Create a Div tag with 10 % margin on left and right side of the page -->
+
+    <div align="center"
+        style="background-color: rgba(0, 0, 0, 0.05); border-radius: 10px; margin-left: 100px; margin-right: 100px;">
+
+        <!-- Create a table to display the images round bordered -->
+        <!-- add border to the table -->
+
+        <table id="image-table" class="table table rounded  table-hover">
+            <thead>
+                <tr>
+                    <th style="font-size: 20px; font-family: Poppins; color: rgb(66 133 244); font-weight: normal;">
+                        Image</th>
+                    <th style="font-size: 20px; font-family: Poppins; color: rgb(66 133 244); font-weight: normal;">
+                        Prompt</th>
+                    <th style="font-size: 20px; font-family: Poppins; color: rgb(66 133 244); font-weight: normal;">
+                        Result</th>
+                    <th style="font-size: 20px; font-family: Poppins; color: rgb(66 133 244); font-weight: normal;">Date
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script>
+        const API_URL = 'https://us-central1-cf-data-analytics.cloudfunctions.net/gemini-example-serve';
+        async function callAPI() {
+
+            // wrap error handling in a try/catch block
+            try {
+
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+
+                var raw = JSON.stringify({
+                    "flag": "text"
+                });
+
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+
+                const response = await fetch(API_URL, requestOptions);
+
+                // check if the response is ok
+                if (!response.ok) {
+                    // display the error message
+                    const errorMessage = document.querySelector('#error-message');
+                    displayErrorMessage(`HTTP error: ${response.status}`);
+                    return;
+                }
+
+                const data = await response.json();
+                const tableBody = document.querySelector('#image-table tbody');
+                tableBody.innerHTML = '';
+                // clear error message
+                document.querySelector('#error-message').textContent = '';
+                // Iterate over the JSON data and create table rows
+                //console.log(data);
+                data.data.forEach(image => {
+                    const row = document.createElement('tr');
+
+                    const imageCell = document.createElement('td');
+                    const imageElement = document.createElement('img');
+
+                    functionText = "ShowImage('" + image.fileLocation + "')";
+
+                    imageElement.setAttribute("onclick", functionText);
+                    imageElement.style.cursor = "pointer";
+                    imageElement.style.width = "60px";
+                    imageElement.style.height = "80px";
+                    imageElement.src = image.fileLocation;
+                    //alert(image.fileLocation);
+                    imageCell.appendChild(imageElement);
+                    row.appendChild(imageCell);
+
+                    const queryCell = document.createElement('td');
+                    // change the font size to 20 
+                    queryCell.style.fontSize = "20px";
+                    queryCell.style.fontFamily = "Poppins";
+                    queryCell.textContent = image.query;
+                    row.appendChild(queryCell);
+
+                    const resultCell = document.createElement('td');
+                    // change the font size to 20 
+                    resultCell.style.fontSize = "20px";
+                    queryCell.style.fontFamily = "Poppins";
+                    resultCell.textContent = image.result;
+                    row.appendChild(resultCell);
+
+                    const dateCell = document.createElement('td');
+                    // format the date to yyyy-mm-dd along with time in hh:mm:ss  input is 2024-01-12T14:21:14.726Z
+                    // convert the date to yyyy-mm-dd hh:mm:ss from UTC to local time
+                    dateCell.style.fontSize = "20px";
+                    queryCell.style.fontFamily = "Poppins";
+                    const date = new Date(image.timeStamp);
+
+                    dateCell.textContent = date.toLocaleString();
+
+                    //dateCell.textContent = image.timeStamp;
+                    row.appendChild(dateCell);
+
+
+                    tableBody.appendChild(row);
+                });
+            }
+            catch (error) {
+                displayErrorMessage(error.message);
+                return;
+            }
+        }
+        callAPI();
+        // create function display error messge take the http return code and display the error message
+        function displayErrorMessage(httpStatusCode) {
+            const errorMessage = document.querySelector('#error-message');
+            errorMessage.textContent = `HTTP error: ${httpStatusCode}`;
+        }
+
+
+        // Create a Function to show the image in a modal popup and take image url as input
+        function ShowImage(imgUrl) {
+            // create a modal dialog
+            // remove model if it already exists
+            if (document.getElementById('image-modal')) {
+                document.getElementById('image-modal').remove();
+            }
+            // create the modal dialog
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'image-modal';
+
+            // position model dialong to the left of the page
+            modal.style.position = "absolute";
+            modal.style.left = "0";
+            modal.style.top = "0";
+            modal.style.width = "100%";
+            modal.style.height = "100%";
+
+            modal.innerHTML = "";
+            // set the modal content)
+            modal.innerHTML = `<div class="modal-dialog" height= "100%" width="100%">
+          <div class="modal-content" height= "100%" width="100%">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Image</h4>
+            </div>
+            <div class="modal-body">
+              <img height= "100%" width="100%" src="` + imgUrl + `" >
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>`;
+            //alert (modal.innerHTML);
+            // add the modal to the document body
+            document.body.appendChild(modal);
+            $('#image-modal').modal('show');
+
+        }
+        var timerId;
+        function timerEvent(switchState) {
+            if (switchState) {
+                // Switch is turned ON
+                // Implement your settimer logic here:
+                //console.log("Switch is ON: Implementing settimer logic.");
+                // Example:
+                // Set a timer to call the API every 3 seconds:
+                timerId = setInterval(callAPI, 3000);
+
+            } else {
+                // Switch is turned OFF
+                // Clear the timer or perform other actions:
+                //console.log("Switch is OFF: Clearing timer or other actions.");
+                // Example:
+                clearInterval(timerId);
+            }
+        }
+    </script>
+    <!--Footer add powered by Google -->
+    <div class="footer" align="center">
+        <p style="font-family: Poppins;color: rgb(105, 105, 105)">Designed and Developed for the GLC</p>
+        <img src="google.png" alt="Gemini Logo" width="155.625" height="50.75"
+            style="margin-left: 100px; margin-right: 100px; margin-bottom: 10px;">
+    </div>
+</body>
+
+</html>
