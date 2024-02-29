@@ -2,7 +2,7 @@
 
 A simple Python application that highlights the multi-modal capabilities Gemini.
 
-The services outlined this repo are accessed via two HTML pages stored in Cloud Storage. These web pages expose two fun demos.
+The services outlined this repo are accessed via two HTML pages stored in Cloud Storage. These web pages expose two fun _"carnival game"_ style demos.
 
 1. **Pictionary:** A unique and digital version of the classic game. In this demo, hand drawn images are sent to Gemini and a response is returned to the web page. The response is Gemini's best guess at what the drawing depicts.
 
@@ -16,9 +16,11 @@ The services outlined this repo are accessed via two HTML pages stored in Cloud 
 
 Four Cloud Functions power the Pictionary and Gemini Playground demo. The basic architecture is shown below. Notice how both end the Pictionary and Gemini Playground user interface interface with the _Cloud Function - Serve_ via webhook.
 
-The flag attribute determines which webpage data is served. In the example below the flag == "text" indicating the the Gemini Playground webpage is calling the function.
+The flag attribute determines which webpage data is served. In the example below the flag = _"text"_ indicating the the Gemini Playground webpage is calling the function.
 
 ## Example Request
+
+The curl command below shows an example http request from the _Serve_ Cloud Function.
 
 ```curl
 curl --location 'https://us-central1-cf-data-analytics.cloudfunctions.net/gemini-example-serve' \
@@ -29,6 +31,8 @@ curl --location 'https://us-central1-cf-data-analytics.cloudfunctions.net/gemini
 ```
 
 ## Example Response
+
+The document below shows an example response from the _Serve_ Cloud Function. In this example the flag attribute is set to "" indicating the Pictionary webpage is calling the function.
 
 ```json
 {

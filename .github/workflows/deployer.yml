@@ -39,6 +39,14 @@ jobs:
         run: gcloud storage buckets create gs://${{secrets.HOST}};
           gcloud storage buckets add-iam-policy-binding gs://${{secrets.HOST}} --member=allUsers --role=roles/storage.objectViewer
 
+      - name: "create firestore default database"
+        continue-on-error: true
+        run: gcloud firestore databases create --location=nam5
+
+      - name: "create firestore index for pictionary gemini-demo-images collection"
+        continue-on-error: true
+        run: gcloud firestore indexes composite create --collection-group=gemini-demo-images --field-config=field-path=timeStamp,order=descending --field-config=field-path=imageDescription,order=ascending
+
   build:
     runs-on: ubuntu-latest
     needs: infra
