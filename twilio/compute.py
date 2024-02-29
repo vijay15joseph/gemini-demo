@@ -35,7 +35,7 @@ def run(**kwargs):
                 sms_sid, number_mask(sms_from), filename)
 
             # create results doc (collection 2)
-            save_results_collection2(sms_sid, filename)
+            save_results_collection2(sms_sid, bucket_name,filename)
 
         elif dtype == "both":
 
@@ -53,7 +53,7 @@ def run(**kwargs):
                 sms_sid, number_mask(sms_from), filename)
 
             # create results doc
-            save_results_collection2(sms_sid, filename)
+            save_results_collection2(sms_sid,bucket_name, filename)
 
             ################################## processes text #################################
 

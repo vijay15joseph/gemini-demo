@@ -67,7 +67,7 @@ def save_results_collection1(id, user, file):
                  "timeStamp": ct})
 
 
-def save_results_collection2(id, file):
+def save_results_collection2(id, bucket,file):
 
     if not firebase_admin._apps:
         firebase_admin.initialize_app()
@@ -76,7 +76,7 @@ def save_results_collection2(id, file):
 
     doc_ref = db.collection("gemini-demo-text-result").document(id)
     doc_ref.set({"fileName": file,
-                "fileLocation": "https://storage.googleapis.com/twillio-images/" + file,
+                "fileLocation": "https://storage.googleapis.com/" + bucket + "/" + file,
                  "query": "",
                  "result": "",
                  "timeStamp": None})
