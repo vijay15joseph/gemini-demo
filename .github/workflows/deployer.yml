@@ -1,4 +1,4 @@
-name: CD CD
+name: CI CD
 
 on:
   push:
@@ -22,17 +22,17 @@ jobs:
 
       - name: "create gcs bucket for generate function code"
         continue-on-error: true
-        run: "gcloud storage buckets create gs://${{secrets.GENERATE_SOURCE_GCS}}"
+        run: "gcloud storage buckets create gs://${{vars.GENERATE_SOURCE_GCS}}"
 
       - name: "create gcs bucket for serve function code"
         continue-on-error: true
-        run: "gcloud storage buckets create gs://${{secrets.SERVE_SOURCE_GCS}}"
+        run: "gcloud storage buckets create gs://${{vars.SERVE_SOURCE_GCS}}"
 
       - name: "create public gcs bucket for uploaded images"
         continue-on-error: true
         run:
-          gcloud storage buckets create gs://${{vars.IMAGES_GCS}} --location=${{secrets.LOCATION}};
-          gcloud storage buckets add-iam-policy-binding gs://${{secrets.IMAGES_GCS}} --member=allUsers --role=roles/storage.objectViewer
+          gcloud storage buckets create gs://${{vars.IMAGES_GCS}} --location=${{vars.LOCATION}};
+          gcloud storage buckets add-iam-policy-binding gs://${{vars.IMAGES_GCS}} --member=allUsers --role=roles/storage.objectViewer
 
       - name: "create public gcs bucket for html front end"
         continue-on-error: true
@@ -75,7 +75,7 @@ jobs:
         uses: "google-github-actions/upload-cloud-storage@v1"
         with:
           path: "generate"
-          destination: ${{secrets.GENERATE_SOURCE_GCS}}
+          destination: ${{vars.GENERATE_SOURCE_GCS}}
           gzip: true
 
       - name: "upload serve directory as artifact"
@@ -88,7 +88,7 @@ jobs:
         uses: "google-github-actions/upload-cloud-storage@v1"
         with:
           path: "serve"
-          destination: ${{secrets.SERVE_SOURCE_GCS}}
+          destination: ${{vars.SERVE_SOURCE_GCS}}
           gzip: true
 
   deploy-generate:
@@ -108,7 +108,7 @@ jobs:
           version: ">= 363.0.0"
 
       - name: "copy source code directory"
-        run: "gsutil cp -r gs://${{secrets.GENERATE_SOURCE_GCS}}/generate ."
+        run: "gsutil cp -r gs://${{vars.GENERATE_SOURCE_GCS}}/generate ."
 
       - name: "list files"
         run: "cd generate; ls"
@@ -117,18 +117,18 @@ jobs:
         run: "cd generate; ls; zip generate.zip *"
 
       - name: "upload source code"
-        run: "gsutil cp generate/generate.zip gs://${{secrets.GENERATE_SOURCE_GCS}}"
+        run: "gsutil cp generate/generate.zip gs://${{vars.GENERATE_SOURCE_GCS}}"
 
       - name: "deploy cloud function using gcloud"
         continue-on-error: false
         run:
-          "gcloud  functions deploy gemini-example --region=${{secrets.LOCATION}} \
+          "gcloud  functions deploy gemini-example --region=${{vars.LOCATION}} \
           --runtime=python39 --gen2 --entry-point=main \
-          --trigger-bucket=${{secrets.IMAGES_GCS}} \
+          --trigger-bucket=${{vars.IMAGES_GCS}} \
           --min-instances=1 \
           --memory=2Gi \
-          --set-env-vars=PROJECT=${{secrets.PROJECT}},LOCATION=${{secrets.LOCATION}} \
-          --source=gs://${{secrets.GENERATE_SOURCE_GCS}}/generate.zip"
+          --set-env-vars=PROJECT=${{secrets.PROJECT}},LOCATION=${{vars.LOCATION}} \
+          --source=gs://${{vars.GENERATE_SOURCE_GCS}}/generate.zip"
 
   deploy-serve:
     runs-on: ubuntu-latest
@@ -147,7 +147,7 @@ jobs:
           version: ">= 363.0.0"
 
       - name: "copy source code directory"
-        run: "gsutil cp -r gs://${{secrets.SERVE_SOURCE_GCS}}/serve ."
+        run: "gsutil cp -r gs://${{vars.SERVE_SOURCE_GCS}}/serve ."
 
       - name: "list files"
         run: "cd serve; ls"
@@ -156,14 +156,14 @@ jobs:
         run: "cd serve; ls; zip serve.zip *"
 
       - name: "upload source code"
-        run: "gsutil cp serve/serve.zip gs://${{secrets.SERVE_SOURCE_GCS}}"
+        run: "gsutil cp serve/serve.zip gs://${{vars.SERVE_SOURCE_GCS}}"
 
       - name: "deploy cloud function using gcloud"
         continue-on-error: false
         run:
-          "gcloud  functions deploy gemini-example-serve --region=${{secrets.LOCATION}} \
+          "gcloud  functions deploy gemini-example-serve --region=${{vars.LOCATION}} \
           --runtime=python39 --gen2 --entry-point=main \
           --trigger-http \
           --allow-unauthenticated \
           --min-instances=1 \
-          --source=gs://${{secrets.SERVE_SOURCE_GCS}}/serve.zip"
+          --source=gs://${{vars.SERVE_SOURCE_GCS}}/serve.zip"
