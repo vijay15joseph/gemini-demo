@@ -61,7 +61,7 @@ The document below shows an example response from the _Serve_ Cloud Function. In
 ```mermaid
 flowchart LR
     A(Pictionary Drawings) --> |local wheel|B(Cloud Storage)
-    B --> C(Cloud Function - Generate)
+    B --> |event arc|C(Cloud Function - Generate)
     C <--> D(Gemini API)
     C --> E(Firestore)
     E <--> G(Cloud Function - Serve)
@@ -70,7 +70,7 @@ flowchart LR
     G <--> |https|I(Gemini Playground Web Page)
 
     J(Image + Prompt) --> |SMS/MMS| K(Twilio Endpoint)
-    K --> L(Cloud Function - ldjfgl)
+    K --> |https|L(Cloud Function - ldjfgl)
     L <--> M(Gemini API)
     L --> N(Firestore)
     L --> O(Cloud Storage)
