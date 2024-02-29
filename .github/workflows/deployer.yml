@@ -20,6 +20,10 @@ jobs:
         with:
           version: ">= 363.0.0"
 
+      - name: "create gcs bucket for twilio function code"
+        continue-on-error: true
+        run: "gcloud storage buckets create gs://${{vars.TWILIO_SOURCE_GCS}}"
+
       - name: "create gcs bucket for generate function code"
         continue-on-error: true
         run: "gcloud storage buckets create gs://${{vars.GENERATE_SOURCE_GCS}}"
