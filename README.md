@@ -2,28 +2,33 @@
 
 A simple Python application that highlights the multi-modal capabilities Gemini.
 
-The services outlined this repo are accessed via two HTML pages stored in Cloud Storage. These web pages expose two fun _"carnival game"_ style demos.
+End users interact with this application via two HTML pages stored in Cloud Storage. These web pages expose fun _"carnival game"_ style demos. The two games are:
 
-1. **Pictionary:** A unique and digital version of the classic game. In this demo, hand drawn images are sent to Gemini and a response is returned to the web page. The response is Gemini's best guess at what the drawing depicts.
+1. **Pictionary:** A digital version of the classic game. In this demo, hand drawn images are sent to Gemini and a response is returned to the web page. The response is Gemini's best guess at what the drawing depicts.
 
-   The following prompt is send to gemini with the draing:
+   The following prompt is sent to gemini with a drawing:
 
-   ````txt
-   Let's play pictionary. I will show you a drawing I drew and you guess what it is! I will be drawing common nouns like animals, vehicles, and household objects. Please guess even if you are unsure. Do not respond with a question.```
+   ```txt
+   Let's play pictionary. I will show you a drawing I drew and you guess what it is! I will be drawing common nouns like animals, vehicles, and household objects. Please guess even if you are unsure. Do not respond with a question.
+   ```
 
-   ````
-
-2. **Gemini Playground:** This open playground allows users to interface with Gemini by texting a picture and prompt to a [Twilio](https://www.twilio.com/en-us?utm_source=google&utm_medium=cpc&utm_term=twilio&utm_campaign=G_S_NAMER_Brand_ROW_RLSA&cq_plac=&cq_net=g&cq_pos=&cq_med=&cq_plt=gp&gad_source=1&gclid=CjwKCAiA0PuuBhBsEiwAS7fsNUuJMS_6sqqcNp5ySf6tFLCHV5sycOoTbtqKN7AuYm1JcUARy4ITtRoCOz8QAvD_BwE) endpoint. The responses are shown on the web page.
+2. **Gemini Playground:** This open playground allows users to interact with Gemini by texting a picture and prompt to a [Twilio](https://www.twilio.com/en-us?utm_source=google&utm_medium=cpc&utm_term=twilio&utm_campaign=G_S_NAMER_Brand_ROW_RLSA&cq_plac=&cq_net=g&cq_pos=&cq_med=&cq_plt=gp&gad_source=1&gclid=CjwKCAiA0PuuBhBsEiwAS7fsNUuJMS_6sqqcNp5ySf6tFLCHV5sycOoTbtqKN7AuYm1JcUARy4ITtRoCOz8QAvD_BwE) endpoint. The responses are shown on the web page with the original image.
 
 # Architecture
 
-Four Cloud Functions _(Gen2)_ power the Pictionary and Gemini Playground demo. The basic architecture is shown in the diagram below. Notice how both Pictionary and the Gemini Playground user interface retreive results from the _Serve_ Cloud Function via webhook.
+Three Cloud Functions _(Gen2)_ power the Pictionary and Gemini Playground demo. The basic architecture is shown in the diagram below. Notice how both demos rely on the interface to retrieve results via the **_Serve_** Cloud Function using a webhook.
 
-The `flag` attribute determines what data is served _(Pictionary or Gemini Playgound)_. In the example below, `flag = "text"` indicating the Gemini Playground webpage is calling the function.
+A `flag` attribute passed to the **_Serve_** Cloud Function determines what data is returned _(Pictionary or Gemini Playgound)_. In the example below, `flag = "text"` indicating the Gemini Playground webpage is calling the function. Any other value returns Pictionary results.
+
+All three Cloud Function are described in detail below:
+
+1. **Generate:** Eventarc triggered function linked to the _IMAGES_GCS_ Cloud Storage bucket defined in Action Variables. This function sends drawings stored in GCS and the pictionary prompt to Gemini. The Gemini response is stored in Firestore for later retrieval by the **_Serve_** Cloud Function.
+2. **Serve:** Endpoint designed to serve results to the HTML front end stored in GCS.
+3. **Twilio:** Twilio endpoint. This function receives SMS/MMS forwarded via webhook from Twilio. These messages are stored in Firestore and sent to Gemini when a prompt and message are available. The results are also stored in Firestore and served via the **_Serve_** Cloud Function.
 
 ## Example Request
 
-The curl command below shows an example http request directed at the _Serve_ Cloud Function. This function returns new results for display.
+The curl command below shows an example http request directed at the **_Serve_** Cloud Function. This function returns new results for display.
 
 ```curl
 curl --location 'https://us-central1-cf-data-analytics.cloudfunctions.net/gemini-example-serve' \
@@ -110,13 +115,13 @@ This project includes a yaml file `.github/workflows/deploy.yaml` for deployment
 
 ## Gemini Playground _(Twilio)_ Setup
 
-An active Twilio account is required to use the Gemini Playground. Twilio us used to securely receive MMS images and text prompts. These messages are then forwarded to the _Twilio_ Cloud Function via webhook.
+An active Twilio account and registered number is required to use the Gemini Playground. Twilio us used to securely receive MMS images and text prompts. These messages are then forwarded to the _Twilio_ Cloud Function via webhook.
 
 Under `Phone Numbers` >> `Active Numbers` >> `Configure` >> `Messaging Configuration` set the `URL` to the _Twilio_ Cloud Function endpoint.
 
 ## Pictionary Setup
 
-The Pictionary demo accepts images in the the _IMAGES_GCS_ gcs bucket defined in Action Variables. You can use many different methods to stream images to this bucket. For this example I used some basic Python code shown below:
+The Pictionary demo accepts images in the _IMAGES_GCS_ gcs bucket defined in Action Variables. You can use many different methods to stream images to this bucket. For this example I used some basic Python code shown below:
 
 ```python
 import cv2
