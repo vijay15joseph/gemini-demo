@@ -14,13 +14,13 @@ The services outlined this repo are accessed via two HTML pages stored in Cloud 
 
 # Architecture
 
-Four Cloud Functions power the Pictionary and Gemini Playground demo. The basic architecture is shown below. Notice how both end the Pictionary and Gemini Playground user interface interface with the _Cloud Function - Serve_ via webhook.
+Four Cloud Functions _(Gen2)_ power the Pictionary and Gemini Playground demo. The basic architecture is shown in the diagram below. Notice how both Pictionary and the Gemini Playground user interface retreive results from the _Serve_ Cloud Function via webhook.
 
-The flag attribute determines which webpage data is served. In the example below the flag = _"text"_ indicating the the Gemini Playground webpage is calling the function.
+The `flag` attribute determines what data is served _(Pictionary or Gemini Playgound)_. In the example below, `flag = "text"` indicating the Gemini Playground webpage is calling the function.
 
 ## Example Request
 
-The curl command below shows an example http request from the _Serve_ Cloud Function.
+The curl command below shows an example http request directed at the _Serve_ Cloud Function. This function returns new results for display.
 
 ```curl
 curl --location 'https://us-central1-cf-data-analytics.cloudfunctions.net/gemini-example-serve' \
@@ -32,7 +32,7 @@ curl --location 'https://us-central1-cf-data-analytics.cloudfunctions.net/gemini
 
 ## Example Response
 
-The document below shows an example response from the _Serve_ Cloud Function. In this example the flag attribute is set to "" indicating the Pictionary webpage is calling the function.
+The document below shows an example response from the _Serve_ Cloud Function. In this example `flag = ""`, indicating the Pictionary webpage is calling the function. Notice how `imageDescription` contains the Gemini response and the `imageUrl` contains the Cloud Storage location for image sent to Gemini.
 
 ```json
 {
@@ -84,8 +84,23 @@ flowchart LR
 
 # Deployment
 
-This project includes a yaml file for deployment to Google Cloud using Github Actions maintained here: https://github.com/google-github-actions/deploy-cloud-functions. The Github Action Workflow requires several _"Action Secrets"_ used to set environment variables during deployment. Set the following secrets in the repository before deployment.
+This project includes a yaml file `.github/workflows/deploy.yaml` for deployment to Google Cloud using Github Actions. The Github Action Workflow requires several _"Action Secrets"_ and _"Action Variables"_ used to authenticate with GCP and set environment variables. Set the following items in the repository before deployment.
+
+## Action Secrets
 
 | Action Secret | Value                                                          |
 | ------------- | -------------------------------------------------------------- |
 | GCP_SA_KEY    | Service Account Key used to authenticate GitHub to GCP Project |
+| HMAC          | Salt key to mask sender identity                               |
+
+## Action Varables
+
+| Action Secret       | Value                                                         |
+| ------------------- | ------------------------------------------------------------- |
+| GENERATE_SOURCE_GCS | GCS bucket to store the _Generate_ cloud function source code |
+| HOST                | GCS bucket to store html                                      |
+| IMAGES_GCS          | Salt key to mask sender identity                              |
+| LOCATION            | GCP destination region                                        |
+| SERVE_SOURCE_GCS    | GCS bucket to store the _Serve_ cloud function source code    |
+| TWILIO_IMAGES       | GCS bucket to store MMS images from Twilio                    |
+| TWILIO_SOURCE_GCS   | GCS bucket to store the _Twilio_ cloud function source code   |
