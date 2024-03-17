@@ -5,6 +5,7 @@ from firebase_admin import firestore
 
 
 def generate_text(project_id: str, location: str, file: str) -> str:
+    # Initiate Git Actions
     # Initialize Vertex AI
     vertexai.init(project=project_id, location=location)
     # Load the model
