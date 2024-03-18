@@ -49,6 +49,13 @@ jobs:
         run: gcloud storage buckets create gs://${{vars.HOST}};
           gcloud storage buckets add-iam-policy-binding gs://${{vars.HOST}} --member=allUsers --role=roles/storage.objectViewer
 
+      - name: "add iam publisher role to gcs"
+        continue-on-error: true
+        run: PROJECT_ID=${{secrets.PROJECT}};
+          PROJECT_NUMBER=$(gcloud projects list --filter="project_id:$PROJECT_ID" --format='value(project_number)');
+          SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p $PROJECT_NUMBER);
+          gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$SERVICE_ACCOUNT --role roles/pubsub.publisher
+
       - name: "create firestore default database"
         continue-on-error: true
         run: gcloud firestore databases create --location=nam5
