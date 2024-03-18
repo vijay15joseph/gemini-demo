@@ -9,3 +9,14 @@ gcloud storage cp web/ gs://cf-gemini-demo-app-host -r
 
 gcloud firestore indexes composite create --collection-group=gemini-demo-images --field-config=field-path=timeStamp,order=descending --field-config=field-path=imageDescription,order=ascending
 
+
+
+PROJECT_ID=${{secrets.PROJECT}}
+
+PROJECT_NUMBER=$(gcloud projects list --filter="project_id:$PROJECT_ID" --format='value(project_number)')
+
+SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p $PROJECT_NUMBER)
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member serviceAccount:$SERVICE_ACCOUNT \
+  --role roles/pubsub.publisher
