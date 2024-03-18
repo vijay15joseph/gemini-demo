@@ -51,10 +51,9 @@ jobs:
 
       - name: "add iam publisher role to gcs"
         continue-on-error: true
-        run: PROJECT_ID=${{secrets.PROJECT}};
-          PROJECT_NUMBER=$(gcloud projects list --filter="project_id:$PROJECT_ID" --format='value(project_number)');
-          SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p $PROJECT_NUMBER);
-          gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$SERVICE_ACCOUNT --role roles/pubsub.publisher
+        run:
+          SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p ${{secrets.PROJECT}});
+          gcloud projects add-iam-policy-binding ${{secrets.PROJECT}} --member="serviceAccount:$SERVICE_ACCOUNT" --role='roles/pubsub.publisher'
 
       - name: "create firestore default database"
         continue-on-error: true
