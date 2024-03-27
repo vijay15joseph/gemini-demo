@@ -50,8 +50,8 @@ jobs:
           gcloud storage buckets add-iam-policy-binding gs://${{vars.HOST}} --member=allUsers --role=roles/storage.objectViewer
 
       - name: "create public gcs bucket for uploaded audio files for speech2text"
-          continue-on-error: true
-          run:
+        continue-on-error: true
+        run:
             gcloud storage buckets create gs://${{vars.SPEECH2TEXT_GCS}} --location=${{vars.LOCATION}};
             gcloud storage buckets add-iam-policy-binding gs://${{vars.SPEECH2TEXT_GCS}} --member=allUsers --role=roles/storage.objectViewer
       
