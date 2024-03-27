@@ -42,11 +42,13 @@ def generate_speech2text(project_id: str, location: str, file: str) -> str:
     print("Waiting for operation to complete...")
     response = operation.result(timeout=90)
 
+    transcncript = ""
     for result in response.results:
         print("Transcript: {}".format(result.alternatives[0].transcript))
+        transcncript += "{}".format(result.alternatives[0].transcript)
 
    # Summarize the speech-to-text transcript using a generative AI model
-    summary = summarize(response.text)
+    summary = summarize(transcncript)
    
     
     # The response's audio_content is binary.
