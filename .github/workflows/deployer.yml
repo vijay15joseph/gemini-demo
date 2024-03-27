@@ -32,6 +32,10 @@ jobs:
         continue-on-error: true
         run: "gcloud storage buckets create gs://${{vars.SERVE_SOURCE_GCS}}"
 
+      - name: "create gcs bucket for speech2text function code"
+        continue-on-error: true
+        run: "gcloud storage buckets create gs://${{vars.SPEECH2TEXT_SOURCE_GCS}}"
+
       - name: "create public gcs bucket for twilio images"
         continue-on-error: true
         run:
