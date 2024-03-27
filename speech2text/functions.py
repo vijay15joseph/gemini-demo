@@ -17,12 +17,11 @@ def generate_speech2text(project_id: str, location: str, file: str) -> str:
     # https://cloud.google.com/speech-to-text/docs/reference/libraries
     client = speech.SpeechClient()
 
-    #Load the audio file from the Cloud Storage bucket
-    audio_file =  file
 
-    # Load the audio file into memory
-    with open(audio_file, "wav") as audio_file:
-        audio_content = audio_file.read()
+
+      # Load the audio file wave file into memory
+    with open(file, "rb") as file:
+        audio_content = file.read()
 
     # transcribe speech
     audio = speech.RecognitionAudio(content=audio_content)
