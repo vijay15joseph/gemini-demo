@@ -18,13 +18,13 @@ def generate_speech2text(project_id: str, location: str, file: str) -> str:
     client = speech.SpeechClient()
 
 
-
+  
       # Load the audio file wave file into memory
-    with open(file, "rb") as audio_file:
-        audio_content = audio_file.read()
+    #with open(file, "rb") as audio_file:
+    #    audio_content = audio_file.read()
 
     # transcribe speech
-    audio = speech.RecognitionAudio(content=audio_content)
+    audio = speech.RecognitionAudio(uri=file)
 
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
