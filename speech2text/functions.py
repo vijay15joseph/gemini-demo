@@ -21,7 +21,7 @@ def generate_speech2text(project_id: str, location: str, file: str) -> str:
     audio_file =  file
 
     # Load the audio file into memory
-    with open(audio_file, "rb") as audio_file:
+    with open(audio_file, "wav") as audio_file:
         audio_content = audio_file.read()
 
     # transcribe speech
