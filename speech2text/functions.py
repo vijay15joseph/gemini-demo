@@ -89,5 +89,10 @@ def summarize(text : str):
         },
         stream=True,
     )
+    summary = ""
+    for response in responses:
+        print(response.text, end="")
+        summary+="{}".response.text
 
-    return responses.text
+
+    return summary
