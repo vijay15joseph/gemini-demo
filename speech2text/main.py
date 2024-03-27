@@ -21,8 +21,8 @@ def main(cloud_event):
 
     path_url = "https://storage.googleapis.com/" + bucket + "/" + name  # public url
 
-    # function that calls gemini api
-    output = generate_text(project, loc, path)
+    # function that calls gemini api for speech2text transcription
+    output = generate_speech2text(project, loc, path)
 
     # save gemini output as document to firestore
     save_results(name, timeCreated, output, path_url)
