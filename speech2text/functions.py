@@ -1,5 +1,6 @@
 import vertexai
 from vertexai.preview.generative_models import GenerativeModel, Part
+import google.cloud
 from google.cloud import speech
 import vertexai.preview.generative_models as generative_models
 import firebase_admin
