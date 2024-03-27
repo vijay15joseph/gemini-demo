@@ -20,8 +20,8 @@ def generate_speech2text(project_id: str, location: str, file: str) -> str:
 
 
       # Load the audio file wave file into memory
-    with open(file, "rb") as file:
-        audio_content = file.read()
+    with open(file, "rb") as audio_file:
+        audio_content = audio_file.read()
 
     # transcribe speech
     audio = speech.RecognitionAudio(content=audio_content)
