@@ -28,7 +28,7 @@ def generate_speech2text(project_id: str, location: str, file: str) -> str:
 
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=24000,
+        sample_rate_hertz=8000,
         language_code="en-US",
         model="default",
         audio_channel_count=1,
