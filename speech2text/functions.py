@@ -18,7 +18,7 @@ def generate_speech2text(project_id: str, location: str, file: str) -> str:
     client = speech.SpeechClient()
 
     #Load the audio file from the Cloud Storage bucket
-    audio_file = "gs://" + file
+    audio_file =  file
 
     # Load the audio file into memory
     with open(audio_file, "rb") as audio_file:
