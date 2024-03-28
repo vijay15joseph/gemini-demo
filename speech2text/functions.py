@@ -53,7 +53,7 @@ def generate_speech2text(project_id: str, location: str, file: str) -> str:
     print(transccript)
    # Summarize the speech-to-text transcript using a generative AI model
     summary = summarize(transccript)
-   
+    print(summary)
     
     # The response's audio_content is binary.
     return summary
