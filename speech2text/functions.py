@@ -41,7 +41,10 @@ def generate_speech2text(project_id: str, location: str, file: str) -> str:
 
     print("Waiting for operation to complete...")
     response = operation.result(timeout=90)
-
+    print(type(response.results))
+    # Each result is for a consecutive portion of the audio. Iterate through
+    # them to get the transcripts for the entire audio file.
+    
     transccript = ""
     for result in response.results:
         transccript += "{}".format(result.alternatives[0].transcript)
@@ -92,8 +95,8 @@ def summarize(text : str):
     )
     summary = ""
     for response in responses:
-        print(response.text, end="")
         summary+="{}".response.text
+        print(response.text, end="")
 
 
     return summary
