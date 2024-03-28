@@ -71,6 +71,10 @@ def save_results(uuid, time, desc, url):
     db = firestore.client()
 
     doc_ref = db.collection("gemini-demo-speech2text-summary").document(uuid)
+    print (time)
+    print (desc)
+    print (url)
+    # Add document data with ID "alovelace" using a dictionary.
     doc_ref.set({"timeStamp": time,  "summary": desc, "speechUrl": url})
     print("Document written with ID: {}".format(doc_ref.id))
 
