@@ -95,10 +95,9 @@ def summarize(text : str):
         stream=True,
     )
     summary = ""
-    
+    print(vars(responses))
+
     for response in responses:
         print(response.text, end="")
-
-    summary = responses.candidates[0].content.parts[0].text
 
     return summary
