@@ -103,7 +103,7 @@ def summarize(text : str):
 
     summary = ""
     for response in responses:
-        summary += "{}".response.text
+        summary += response.text
 
     print(summary)  
     return summary
