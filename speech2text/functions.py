@@ -77,8 +77,9 @@ def save_results(uuid, time, desc, url):
 def summarize(text : str):
     vertexai.init(project="vijay-gcp-demo-project", location="us-central1")
     model = GenerativeModel("gemini-1.0-pro-001")
+    print(text)
     responses = model.generate_content(
-        text+"""
+        text+"""\n
     Provide a summary of the above text in 2 sentences""",
         generation_config={
             "max_output_tokens": 2048,
