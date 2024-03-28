@@ -98,7 +98,7 @@ def summarize(text : str):
     
     for response in responses:
         print(response.text, end="")
-        summary+="{}".response.text
-    
+
+    summary = responses.candidates[0].content.parts[0].text
 
     return summary
