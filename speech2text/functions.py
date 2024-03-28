@@ -71,7 +71,7 @@ def save_results(uuid, time, desc, url):
     db = firestore.client()
 
     doc_ref = db.collection("gemini-demo-speech2text-summary").document(uuid)
-    doc_ref.set({"timeStamp": time, "transcription": """""", "summary": desc, "speechUrl": url})
+    doc_ref.set({"timeStamp": time, "transcription":"", "summary": desc, "speechUrl": url})
 
 
 def summarize(text : str):
@@ -94,7 +94,6 @@ def summarize(text : str):
         },
         stream=True,
     )
-
 
     for response in responses:
         print(response.text, end="")
